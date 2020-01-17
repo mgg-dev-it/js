@@ -1,12 +1,19 @@
 {
   "name": "mag-js-lib",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "tedious": "^8.0.1"
+  },
+  "devDependencies": {},
+  "description": ""
 }
