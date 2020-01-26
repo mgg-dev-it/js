@@ -31,7 +31,7 @@ function login(username, password){
   
 }
 
-function checkLogin(){
+function checkLogin(){ 
   // function verifyToken (req, res, next) {
   //   //if (req.query.token === goodtoken) next();
   //   //else res.status(500).send('Try again ...!')
