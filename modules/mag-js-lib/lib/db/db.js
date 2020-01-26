@@ -1,6 +1,9 @@
 'use strict';
 
 const util = require('../util/util.js');
+const db_tedious = require('./db_tedious.js');
+
+var db;
 
 var debug = process.env.DEBUG || false;
 //console.log(process.env.DEBUG);
@@ -16,7 +19,10 @@ var debug = process.env.DEBUG || false;
 var dbms, driver, server, username, password, status;
 
 function getStatus() {
-    return (status);
+    if (db == null) {
+        return (status);
+    }
+    return(db.getStatus());
 }
 
 function init(_dbms, _driver, _server, _username, _password) {
@@ -60,12 +66,22 @@ function init(_dbms, _driver, _server, _username, _password) {
     return (retval);
 }
 
-function connect() {
+function connect(cb) {
     if (status != "initialized") return (false);
     let retval = false;
+    db = null;
     switch (dbms) {
         case "mssql":
-            retval = connectMSSQL();
+            switch (driver) {
+                case "tedious":
+                    db = db_tedious;
+                    break;
+                case "mssql":
+                    //
+                    break;
+                default:
+                //
+            }
             break;
         case "oracle":
             //
@@ -73,30 +89,43 @@ function connect() {
         default:
             //
             console.log("Error: unknown dbms for connecting");
-            return (false);
     }
-    return (retval);
+    if (db != null) {
+        return (db.connect(server, username, password, cb));
+    } else {
+        return (false);
+    }
 }
 
-function connectMSSQL() {
-    let retval = false;
-    switch (driver) {
-        case "tedious":
-            //
-            break;
-        case "ms":
-            //
-            break;
-        default:
-            //
-            console.log("Error: unknown driver for connecting MSSQL");
-            return (false);
+// function connectMSSQL() {
+//     let retval = false;
+//     switch (driver) {
+//         case "tedious":
+//             db_tedious.connect();
+//             break;
+//         case "mssql":
+//             //
+//             break;
+//         default:
+//             //
+//             console.log("Error: unknown driver for connecting MSSQL");
+//             return (false);
+//     }
+//     return (retval);
+// }
+
+function disconnect() {
+    if (db != null) {
+        status = "";
+        return (db.disconnect());
+    } else {
+        return (false);
     }
-    return (retval);
 }
 
 module.exports = {
     init: init,
     connect: connect,
+    disconnect: disconnect,
     getStatus: getStatus
 };
