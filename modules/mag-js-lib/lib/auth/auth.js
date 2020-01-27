@@ -4,6 +4,18 @@
 
 //module.exports = auth;
 
+var status = "";
+
+function init(_logindataprovider) {
+  if (!_logindataprovider.login) {
+    throw new Error("_logindataprovider.login not exists");
+    //@todo check parameters too?
+    return (false);
+  }
+  status = "initialized";
+}
+
+
 /**
  * Test login function
  *
@@ -11,11 +23,11 @@
  * @param {String} password The password
  * @returns {boolean} True if username and password are authenticated, otherwise false
  */
-function login(username, password){
-	if (typeof username != "string" || typeof password != "string"){
-        throw new Error("Please provide an input of type string");
-		return (false);
-	}
+function login(username, password) {
+  if (typeof username != "string" || typeof password != "string") {
+    throw new Error("Please provide an input of type string");
+    return (false);
+  }
   // app.post("/login", (req, res) => {
   //   console.log(req.body);
   //   if (req.body.username && req.body.password){
@@ -28,10 +40,10 @@ function login(username, password){
   //   res.json({success:false, message: "Login failed"});
   //   //res.send("Login failed");
   // });
-  
+
 }
 
-function checkLogin(){ 
+function checkLogin() {
   // function verifyToken (req, res, next) {
   //   //if (req.query.token === goodtoken) next();
   //   //else res.status(500).send('Try again ...!')
@@ -53,12 +65,13 @@ function checkLogin(){
   //   }
   //   next();
   // }
-  
+
   // app.use(verifyToken);
-  
+
 }
 
 module.exports = {
+  init: init,
   login: login,
   checkLogin: checkLogin
 };
