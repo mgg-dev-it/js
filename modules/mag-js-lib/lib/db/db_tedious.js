@@ -5,35 +5,6 @@ var Connection = require('tedious').Connection;
 var conn;
 var status = "";
 
-// var config = {
-//     authentication: {
-//         type: "default",
-//         options: {
-//             userName: 'sqlszlaApp',
-//             password: 'kx2Wed89RetszLa'
-//         }
-//     },
-//     server: 'sqlpohu.in.porsche.hu'
-// }
-
-// conn.on('connect', function (err) {
-//     if (err) {
-//         console.log(err)
-//     } else {
-//         status = "connected";
-//         //connected
-//     }
-// })
-
-// var callback_connect = function (err) {
-//     if (err) {
-//         console.log(err)
-//     } else {
-//         status = "connected";
-//         //connected
-//     }
-// }
-
 function getStatus() {
     return (status);
 }
