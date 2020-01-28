@@ -5,6 +5,7 @@
 //module.exports = auth;
 
 var status = "";
+var logindataprovider;
 
 function init(_logindataprovider) {
   if (!_logindataprovider.login) {
@@ -12,22 +13,41 @@ function init(_logindataprovider) {
     //@todo check parameters too?
     return (false);
   }
+  logindataprovider = _logindataprovider;
   status = "initialized";
 }
 
+function testlogindataprovider() {
+  return {
+    login(username, password, options) {
+      if (username == "admin" && password == "admin") {
+        return (JSON.stringify({ username: username, success: true, role: "admin" }));
+      }
+      if (username == "user" && password == "user") {
+        return (JSON.stringify({ username: username, success: true, role: "user" }));
+      }
+      return (JSON.stringify({ username: username, success: false, error: "Login has failed." }));
+    }
+  }
+}
 
 /**
  * Test login function
  *
  * @param {String} username The username
  * @param {String} password The password
+ * @param {String} options  The options
  * @returns {boolean} True if username and password are authenticated, otherwise false
  */
-function login(username, password) {
+function login(username, password, options) {
   if (typeof username != "string" || typeof password != "string") {
     throw new Error("Please provide an input of type string");
     return (false);
   }
+  if (!logindataprovider.login) {
+    return (false);
+  }
+  return (logindataprovider.login(username, password));
   // app.post("/login", (req, res) => {
   //   console.log(req.body);
   //   if (req.body.username && req.body.password){
@@ -73,5 +93,6 @@ function checkLogin() {
 module.exports = {
   init: init,
   login: login,
-  checkLogin: checkLogin
+  checkLogin: checkLogin,
+  testlogindataprovider: testlogindataprovider
 };
