@@ -4,6 +4,9 @@
 
 //module.exports = auth;
 
+//const chilkat = require('@chilkat/ck-node12-win64');
+//const crypt = new chilkat.Crypt2();
+
 var status = "";
 var logindataprovider;
 
@@ -90,9 +93,37 @@ function checkLogin() {
 
 }
 
+// function haval(s) {
+//   crypt.EncodingMode = "hex";
+//   // Hash using HAVAL
+//   // There are two additional properties relevant to HAVAL:
+//   // HavalRounds, and KeyLength.
+//   // HavalRounds can have values of 3, 4, or 5.
+//   // KeyLength can have values of 128, 160, 192, 224, or 256
+//   crypt.HashAlgorithm = "haval";
+//   crypt.HavalRounds = 5;
+//   crypt.KeyLength = 256;
+//   var hash = crypt.HashStringENC(s);
+//   console.log("Haval: " + hash);
+// }
+
+const crypto = require('crypto');
+//const hash = crypto.createHash('sha256');
+//const hash = crypto.createHash('haval');
+
+function haval(s) {
+  var hash = crypto.createHash('sha256');
+  hash.update(s);
+  //console.log(s);
+  //console.log(hash.digest('hex'));
+  var ret = hash.digest('hex');
+  return(ret);
+}
+
 module.exports = {
   init: init,
   login: login,
   checkLogin: checkLogin,
-  testlogindataprovider: testlogindataprovider
+  testlogindataprovider: testlogindataprovider,
+  haval: haval
 };
