@@ -68,8 +68,10 @@ var EncryptPwHaval = (function () {
                 _this.name = name;
                 _this.hashSize = hashSize;
                 _this.blockSize = blockSize;
-                _this.buffer = (function (s) { var a = []; while (s-- > 0)
-                    a.push(0); return a; })(blockSize);
+                _this.buffer = (function (s) {
+                    var a = []; while (s-- > 0)
+                        a.push(0); return a;
+                })(blockSize);
                 _this.resetContext();
             })();
         }
@@ -139,8 +141,10 @@ var EncryptPwHaval = (function () {
                     _this.name = name_1;
                     _this.hashSize = hashSize_1;
                     _this.blockSize = blockSize_1;
-                    _this.buffer = (function (s) { var a = []; while (s-- > 0)
-                        a.push(0); return a; })(blockSize_1);
+                    _this.buffer = (function (s) {
+                        var a = []; while (s-- > 0)
+                            a.push(0); return a;
+                    })(blockSize_1);
                     _this.resetContext();
                 })();
             }
@@ -223,8 +227,10 @@ var EncryptPwHaval = (function () {
                         _this.name = name_2;
                         _this.hashSize = hashSize_2;
                         _this.blockSize = blockSize_2;
-                        _this.buffer = (function (s) { var a = []; while (s-- > 0)
-                            a.push(0); return a; })(blockSize_2);
+                        _this.buffer = (function (s) {
+                            var a = []; while (s-- > 0)
+                                a.push(0); return a;
+                        })(blockSize_2);
                         _this.resetContext();
                     })();
                 }
@@ -319,8 +325,10 @@ var EncryptPwHaval = (function () {
                         _this.name = name_3;
                         _this.hashSize = hashSize_3;
                         _this.blockSize = blockSize_3;
-                        _this.buffer = (function (s) { var a = []; while (s-- > 0)
-                            a.push(0); return a; })(blockSize_3);
+                        _this.buffer = (function (s) {
+                            var a = []; while (s-- > 0)
+                                a.push(0); return a;
+                        })(blockSize_3);
                         _this.resetContext();
                     })();
                 }
@@ -403,8 +411,10 @@ var EncryptPwHaval = (function () {
                         _this.name = name_4;
                         _this.hashSize = hashSize_4;
                         _this.blockSize = blockSize_4;
-                        _this.buffer = (function (s) { var a = []; while (s-- > 0)
-                            a.push(0); return a; })(blockSize_4);
+                        _this.buffer = (function (s) {
+                            var a = []; while (s-- > 0)
+                                a.push(0); return a;
+                        })(blockSize_4);
                         _this.resetContext();
                     })();
                 }
@@ -640,8 +650,10 @@ var EncryptPwHaval = (function () {
     EncryptPwHaval.prototype.padBuffer = function () {
         var n = ((this.count % EncryptPwHaval.BLOCK_SIZE) | 0);
         var padding = (n < 118) ? (118 - n) : (246 - n);
-        var result = (function (s) { var a = []; while (s-- > 0)
-            a.push(0); return a; })(padding + 10);
+        var result = (function (s) {
+            var a = []; while (s-- > 0)
+                a.push(0); return a;
+        })(padding + 10);
         result[0] = 255 & (1 | 0);
         var bl = this.hashSize * 8;
         result[padding++] = 255 & ((((bl & 3) << 6) | ((this.rounds & 7) << 3) | (EncryptPwHaval.HAVAL_VERSION & 7)) | 0);
@@ -702,8 +714,10 @@ var EncryptPwHaval = (function () {
 
     EncryptPwHaval.prototype.getResult = function () {
         this.tailorDigestBits();
-        var result = (function (s) { var a = []; while (s-- > 0)
-            a.push(0); return a; })(this.hashSize);
+        var result = (function (s) {
+            var a = []; while (s-- > 0)
+                a.push(0); return a;
+        })(this.hashSize);
         if (this.hashSize >= EncryptPwHaval.HAVAL_256_BIT) {
             result[31] = 255 & ((this.h7 >>> 24) | 0);
             result[30] = 255 & ((this.h7 >>> 16) | 0);
@@ -916,15 +930,17 @@ var EncryptPwHaval = (function () {
         var partLen = this.blockSize - n;
         var i = 0;
         if (len >= partLen) {
-            /* arraycopy */ (function (srcPts, srcOff, dstPts, dstOff, size) { if (srcPts !== dstPts || dstOff >= srcOff + size) {
-                while (--size >= 0)
-                    dstPts[dstOff++] = srcPts[srcOff++];
-            }
-            else {
-                var tmp = srcPts.slice(srcOff, srcOff + size);
-                for (var i_1 = 0; i_1 < size; i_1++)
-                    dstPts[dstOff++] = tmp[i_1];
-            } })(b, offset, this.buffer, n, partLen);
+            /* arraycopy */ (function (srcPts, srcOff, dstPts, dstOff, size) {
+                if (srcPts !== dstPts || dstOff >= srcOff + size) {
+                    while (--size >= 0)
+                        dstPts[dstOff++] = srcPts[srcOff++];
+                }
+                else {
+                    var tmp = srcPts.slice(srcOff, srcOff + size);
+                    for (var i_1 = 0; i_1 < size; i_1++)
+                        dstPts[dstOff++] = tmp[i_1];
+                }
+            })(b, offset, this.buffer, n, partLen);
             this.transform(this.buffer, 0);
             for (i = partLen; i + this.blockSize - 1 < len; i += this.blockSize) {
                 {
@@ -935,15 +951,17 @@ var EncryptPwHaval = (function () {
             n = 0;
         }
         if (i < len) {
-            /* arraycopy */ (function (srcPts, srcOff, dstPts, dstOff, size) { if (srcPts !== dstPts || dstOff >= srcOff + size) {
-                while (--size >= 0)
-                    dstPts[dstOff++] = srcPts[srcOff++];
-            }
-            else {
-                var tmp = srcPts.slice(srcOff, srcOff + size);
-                for (var i_2 = 0; i_2 < size; i_2++)
-                    dstPts[dstOff++] = tmp[i_2];
-            } })(b, offset + i, this.buffer, n, len - i);
+            /* arraycopy */ (function (srcPts, srcOff, dstPts, dstOff, size) {
+                if (srcPts !== dstPts || dstOff >= srcOff + size) {
+                    while (--size >= 0)
+                        dstPts[dstOff++] = srcPts[srcOff++];
+                }
+                else {
+                    var tmp = srcPts.slice(srcOff, srcOff + size);
+                    for (var i_2 = 0; i_2 < size; i_2++)
+                        dstPts[dstOff++] = tmp[i_2];
+                }
+            })(b, offset + i, this.buffer, n, len - i);
         }
 
         // var msg="";
@@ -953,10 +971,10 @@ var EncryptPwHaval = (function () {
         // console.log(msg);
     };
 
-    EncryptPwHaval.prototype.logArray = function (a){
-        var msg="";
-        for(var i=0; i< a.length; i++){
-            msg += ', '+a[i];
+    EncryptPwHaval.prototype.logArray = function (a) {
+        var msg = "";
+        for (var i = 0; i < a.length; i++) {
+            msg += ', ' + a[i];
         }
         console.log(msg);
     }
@@ -993,18 +1011,24 @@ var EncryptPwHaval = (function () {
         this.resetContext();
     };
 
-    EncryptPwHaval.HEX_DIGITS_$LI$ = function () { if (EncryptPwHaval.HEX_DIGITS == null)
-        EncryptPwHaval.HEX_DIGITS = ("0123456789ABCDEF").split(''); return EncryptPwHaval.HEX_DIGITS; };
+    EncryptPwHaval.HEX_DIGITS_$LI$ = function () {
+        if (EncryptPwHaval.HEX_DIGITS == null)
+            EncryptPwHaval.HEX_DIGITS = ("0123456789ABCDEF").split(''); return EncryptPwHaval.HEX_DIGITS;
+    };
     ;
-    EncryptPwHaval.BASE64_CHARSET_$LI$ = function () { if (EncryptPwHaval.BASE64_CHARSET == null)
-        EncryptPwHaval.BASE64_CHARSET = (EncryptPwHaval.BASE64_CHARS).split(''); return EncryptPwHaval.BASE64_CHARSET; };
+    EncryptPwHaval.BASE64_CHARSET_$LI$ = function () {
+        if (EncryptPwHaval.BASE64_CHARSET == null)
+            EncryptPwHaval.BASE64_CHARSET = (EncryptPwHaval.BASE64_CHARS).split(''); return EncryptPwHaval.BASE64_CHARSET;
+    };
     ;
     EncryptPwHaval.toString$byte_A = function (ba) {
         return EncryptPwHaval.toString$byte_A$int$int(ba, 0, ba.length);
     };
     EncryptPwHaval.toString$byte_A$int$int = function (ba, offset, length) {
-        var buf = (function (s) { var a = []; while (s-- > 0)
-            a.push(null); return a; })(length * 2);
+        var buf = (function (s) {
+            var a = []; while (s-- > 0)
+                a.push(null); return a;
+        })(length * 2);
         for (var i = 0, j = 0, k = void 0; i < length;) {
             {
                 k = ba[offset + i++];
@@ -1059,25 +1083,25 @@ var EncryptPwHaval = (function () {
         ;
     };
 
-    EncryptPwHaval.prototype.toHexString = function (d){
+    EncryptPwHaval.prototype.toHexString = function (d) {
         var retval = "";
-        for (var i = 0; i < d.length; i++){
-            retval += ("00"+d[i].toString(16)).substr(-2).toUpperCase();
+        for (var i = 0; i < d.length; i++) {
+            retval += ("00" + d[i].toString(16)).substr(-2).toUpperCase();
         }
-        return(retval);
+        return (retval);
     };
 
     EncryptPwHaval.Encrypt = function (src) {
         var h = new EncryptPwHaval(EncryptPwHaval.HAVAL_256_BIT, EncryptPwHaval.HAVAL_5_ROUND);
         if (src != null && src.length > 0) {
-            h.update$byte_A(/* getBytes */ (src).split('').map(function (s) { return s.charCodeAt(0); }));
+            h.update$byte_A(/* getBytes */(src).split('').map(function (s) { return s.charCodeAt(0); }));
         }
         //return (h.digest().toString());
         console.log('-----');
         var d = h.digest();
         console.log(d);
         //return (h.digest().toString());
-        return ("-> "+h.toHexString(d));
+        return ("-> " + h.toHexString(d));
         //return (h.digest());
         //return(src);
     };
@@ -1108,4 +1132,4 @@ EncryptPwHaval.HEX_DIGITS_$LI$();
 
 module.exports = {
     EncryptPwHaval: EncryptPwHaval
-  };
+};
