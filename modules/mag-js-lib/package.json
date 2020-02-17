@@ -12,6 +12,7 @@
     "lib": "lib"
   },
   "dependencies": {
+    "mssql": "^6.1.0",
     "tedious": "^8.0.1"
   },
   "devDependencies": {},

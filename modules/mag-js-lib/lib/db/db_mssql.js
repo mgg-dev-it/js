@@ -1,8 +1,8 @@
 'use strict';
 
-var Connection = require('tedious').Connection;
-//var connection = new Connection(config);
-var conn;
+var mssql = require("mssql");
+
+var pool;
 var status = "";
 
 function getStatus() {
@@ -11,22 +11,20 @@ function getStatus() {
 
 function connect(_server, _username, _password, cb) {
     let config = {
-        authentication: {
-            type: "default",
-            options: {
-                userName: _username,
-                password: _password
-            }
-        },
+        user: _username,
+        password: _password,
         server: _server,
+        //database: _database,
         options: {
-            encrypt: false
+            encrypt: false,
+            enableArithAbort: false
         }
     }
-    conn = new Connection(config);
-    //console.log(config)
-    //conn.on('connect', callback_connect);
-    conn.on('connect', function (err) {
+    // console.log("001");
+    pool = new mssql.ConnectionPool(config);
+
+    pool.connect(err => {
+        // console.log("in connect event");
         if (err) {
             console.log(err)
         } else {
@@ -36,11 +34,12 @@ function connect(_server, _username, _password, cb) {
             //connected
         }
     });
+
     return (true);
 }
 
 function disconnect() {
-    conn.close();
+    pool.close();
     status = "disconnected";
 }
 

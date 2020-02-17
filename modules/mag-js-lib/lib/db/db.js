@@ -2,6 +2,7 @@
 
 const util = require('../util/util.js');
 const db_tedious = require('./db_tedious.js');
+const db_mssql = require('./db_mssql.js');
 
 var db;
 
@@ -22,7 +23,7 @@ function getStatus() {
     if (db == null) {
         return (status);
     }
-    return(db.getStatus());
+    return (db.getStatus());
 }
 
 function init(_dbms, _driver, _server, _username, _password) {
@@ -77,7 +78,9 @@ function connect(cb) {
                     db = db_tedious;
                     break;
                 case "mssql":
-                    //
+                    // console.log("009");
+
+                    db = db_mssql;
                     break;
                 default:
                 //
