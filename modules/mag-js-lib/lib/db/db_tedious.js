@@ -9,31 +9,28 @@ function getStatus() {
     return (status);
 }
 
-function connect(_server, _username, _password, cb) {
+function connect(p_server, p_username, p_password, fn_callback_on_success, fn_callback_on_error) {
     let config = {
         authentication: {
             type: "default",
             options: {
-                userName: _username,
-                password: _password
+                userName: p_username,
+                password: p_password
             }
         },
-        server: _server,
+        server: p_server,
         options: {
             encrypt: false
         }
     }
     conn = new Connection(config);
-    //console.log(config)
-    //conn.on('connect', callback_connect);
     conn.on('connect', function (err) {
         if (err) {
-            console.log(err)
+            //console.log(err)
+            fn_callback_on_error(err);
         } else {
             status = "connected";
-            //console.log('xxx')
-            cb();
-            //connected
+            fn_callback_on_success();
         }
     });
     return (true);
@@ -41,7 +38,7 @@ function connect(_server, _username, _password, cb) {
 
 function disconnect() {
     conn.close();
-    status = "disconnected";
+    if (status != "") status = "disconnected";
 }
 
 module.exports = {

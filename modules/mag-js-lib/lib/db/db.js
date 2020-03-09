@@ -26,12 +26,12 @@ function getStatus() {
     return (db.getStatus());
 }
 
-function init(_dbms, _driver, _server, _username, _password) {
-    dbms = _dbms;
-    driver = _driver;
-    server = _server;
-    username = _username;
-    password = _password;
+function init(p_dbms, p_driver, p_server, p_username, p_password) {
+    dbms = p_dbms;
+    driver = p_driver;
+    server = p_server;
+    username = p_username;
+    password = p_password;
     //console.log(debug);
     if (debug) {
         console.log(`dbms = '${dbms}'`);
@@ -67,7 +67,7 @@ function init(_dbms, _driver, _server, _username, _password) {
     return (retval);
 }
 
-function connect(cb) {
+function connect(fn_callback_on_success, fn_callback_on_error) {
     if (status != "initialized") return (false);
     let retval = false;
     db = null;
@@ -94,28 +94,11 @@ function connect(cb) {
             console.log("Error: unknown dbms for connecting");
     }
     if (db != null) {
-        return (db.connect(server, username, password, cb));
+        return (db.connect(server, username, password, fn_callback_on_success, fn_callback_on_error));
     } else {
         return (false);
     }
 }
-
-// function connectMSSQL() {
-//     let retval = false;
-//     switch (driver) {
-//         case "tedious":
-//             db_tedious.connect();
-//             break;
-//         case "mssql":
-//             //
-//             break;
-//         default:
-//             //
-//             console.log("Error: unknown driver for connecting MSSQL");
-//             return (false);
-//     }
-//     return (retval);
-// }
 
 function disconnect() {
     if (db != null) {
