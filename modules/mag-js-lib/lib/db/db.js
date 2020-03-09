@@ -26,6 +26,10 @@ function getStatus() {
     return (db.getStatus());
 }
 
+function isConnected(){
+    return (getStatus() == "connected");
+}
+
 function init(p_dbms, p_driver, p_server, p_username, p_password) {
     dbms = p_dbms;
     driver = p_driver;
@@ -100,6 +104,14 @@ function connect(fn_callback_on_success, fn_callback_on_error) {
     }
 }
 
+function request(p_sql, fn_callback){
+    if (db != null) {
+        return (db.request(p_sql, fn_callback));
+    } else {
+        return (false);
+    }
+}
+
 function disconnect() {
     if (db != null) {
         status = "";
@@ -112,6 +124,7 @@ function disconnect() {
 module.exports = {
     init: init,
     connect: connect,
+    request: request,
     disconnect: disconnect,
     getStatus: getStatus
 };
