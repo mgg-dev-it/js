@@ -26,7 +26,7 @@ function getStatus() {
     return (db.getStatus());
 }
 
-function isConnected(){
+function isConnected() {
     return (getStatus() == "connected");
 }
 
@@ -104,9 +104,9 @@ function connect(fn_callback_on_success, fn_callback_on_error) {
     }
 }
 
-function request(p_sql, fn_callback){
+function request(p_sql, fn_callback, fn_completed) {
     if (db != null) {
-        return (db.request(p_sql, fn_callback));
+        return (db.request(p_sql, fn_callback, fn_completed));
     } else {
         return (false);
     }
@@ -121,10 +121,28 @@ function disconnect() {
     }
 }
 
+function getResultSetCount() {
+    if (db != null) {
+        return (db.getResultSetCount());
+    } else {
+        return (0);
+    }
+}
+
+function getMetadata(index){
+    if (db != null) {
+        return (db.getMetadata(index));
+    } else {
+        return (null);
+    }
+}
+
 module.exports = {
     init: init,
     connect: connect,
     request: request,
     disconnect: disconnect,
-    getStatus: getStatus
+    getStatus: getStatus,
+    getResultSetCount: getResultSetCount,
+    getMetadata: getMetadata
 };
