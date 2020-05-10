@@ -7,8 +7,8 @@ var matrix;
 var startCell, endCell;
 
 function init() {
-    matrix_width = 7;
-    matrix_height = 7;
+    matrix_width = 9;
+    matrix_height = 9;
     characters = ['X', '0'];
     start_end_distance = 5;
     initMatrix();
@@ -39,7 +39,29 @@ function displayMatrix() {
     console.log(s);
 }
 
-function generateStartAndEnd() {
+function displayMatrixRoute(matrix, route) {
+    let m = [];
+    for (let row = 0; row < matrix.length; row++) {
+        let r = [];
+        for (let col = 0; col < matrix[row].length; col++) {
+            r.push(matrix[row][col]);
+        }
+        m.push(r);
+    }
+    for (let i = 0; i < route.length; i++) {
+        if (!route[i].equals(startCell)) {
+            m[route[i].row][route[i].col] = i % 10;
+        }
+    }
+    var s = '';
+    for (let iRow = 0; iRow < matrix_height; iRow++) {
+        if (iRow > 0) s += '\n';
+        s += '[' + m[iRow].join('][') + ']';
+    }
+    console.log(s);
+}
+
+function createStartAndEnd() {
     let sides = ['left', 'top', 'right', "bottom"];
     let startSide = sides.splice(Math.floor(Math.random() * 4), 1)[0];
     //console.log(startSide);
@@ -91,6 +113,24 @@ function isStartAndEndOK() {
     return (true);
 }
 
+function swapCells(cell1, cell2) {
+    let r = cell1.row;
+    let c = cell1.col;
+    cell1.col = cell2.col;
+    cell1.row = cell2.row;
+    cell2.col = c;
+    cell2.row = r;
+}
+
+function changeStartAndEndWhenNeeded() {
+    if (startCell.col > endCell.col) {
+        swapCells(startCell, endCell);
+    }
+    if (startCell.col == endCell.col && startCell.row > endCell.row) {
+        swapCells(startCell, endCell);
+    }
+}
+
 class Cell {
     constructor(row, col) {
         this.row = row;
@@ -99,23 +139,133 @@ class Cell {
     toString() {
         return (`Cell(row=${this.row} col=${this.col})`);
     }
+    equals(anotherCell) {
+        return (anotherCell.row == this.row && anotherCell.col == this.col);
+    }
+}
+
+function isCellOkToRoute(route, cell) {
+    for (let i = 0; i < route.length - 2; i++) {
+        if (cell.row == route[i].row && cell.col == route[i].col) return false;
+
+        if (cell.row == route[i].row - 1 && cell.col == route[i].col - 1) return false;
+        if (cell.row == route[i].row - 1 && cell.col == route[i].col) return false;
+        if (cell.row == route[i].row - 1 && cell.col == route[i].col + 1) return false;
+        if (cell.row == route[i].row && cell.col == route[i].col + 1) return false;
+        if (cell.row == route[i].row + 1 && cell.col == route[i].col + 1) return false;
+        if (cell.row == route[i].row + 1 && cell.col == route[i].col) return false;
+        if (cell.row == route[i].row + 1 && cell.col == route[i].col - 1) return false;
+        if (cell.row == route[i].row && cell.col == route[i].col - 1) return false;
+    }
+    return true;
+}
+
+function isCellInMatrix(cell) {
+    if (cell.row < 0 || cell.row > matrix_height - 1 || cell.col < 0 || cell.col > matrix_width - 1) return false;
+    return true;
+}
+
+function isCellAtTheEnd(cell) {
+    if (cell.row == endCell.row - 1 && cell.col == endCell.col) return true;
+    if (cell.row == endCell.row && cell.col == endCell.col - 1) return true;
+    if (cell.row == endCell.row + 1 && cell.col == endCell.col) return true;
+    if (cell.row == endCell.row && cell.col == endCell.col + 1) return true;
+    return false
+}
+
+function createRoute(route, level) {
+    //console.log(`Level = ${level} Route = ${route.toString()}`);
+    //console.log(route.toString());
+    //route is an array of Cells
+    let lastCellInRoute = route[route.length - 1];
+    let previousCellInRoute = route.length > 1 ? route[route.length - 2] : undefined;
+    //console.log(previousCellInRoute);
+    let possibleNextCells = [];
+    let cell = null;
+    //left
+    if (lastCellInRoute.col > 0 && (!previousCellInRoute || previousCellInRoute.col != lastCellInRoute.col - 1)) {
+        cell = new Cell(lastCellInRoute.row, lastCellInRoute.col - 1);
+        if (isCellOkToRoute(route, cell) && isCellInMatrix(cell)) {
+            possibleNextCells.push(cell);
+        }
+    }
+    //right
+    if (lastCellInRoute.col < matrix_width - 1 && (!previousCellInRoute || previousCellInRoute.col != lastCellInRoute.col + 1)) {
+        cell = new Cell(lastCellInRoute.row, lastCellInRoute.col + 1);
+        if (isCellOkToRoute(route, cell) && isCellInMatrix(cell)) {
+            possibleNextCells.push(cell);
+        }
+    }
+    //up
+    if (lastCellInRoute.row > 0 && (!previousCellInRoute || previousCellInRoute.row != lastCellInRoute.row - 1)) {
+        cell = new Cell(lastCellInRoute.row - 1, lastCellInRoute.col);
+        if (isCellOkToRoute(route, cell) && isCellInMatrix(cell)) {
+            possibleNextCells.push(cell);
+        }
+    }
+    //down
+    if (lastCellInRoute.row < matrix_height - 1 && (!previousCellInRoute || previousCellInRoute.row != lastCellInRoute.row + 1)) {
+        cell = new Cell(lastCellInRoute.row + 1, lastCellInRoute.col);
+        if (isCellOkToRoute(route, cell) && isCellInMatrix(cell)) {
+            possibleNextCells.push(cell);
+        }
+    }
+    let found_route = null;
+    //console.log(possibleNextCells.toString());
+    //console.log(`Level = ${level} lastCellInRoute = ${lastCellInRoute.toString()} possibleNextCells = ${possibleNextCells.toString()}`);
+    for (let i = 0; i < possibleNextCells.length; i++) {
+        //console.log(possibleNextCells[i].toString());
+        //matrix[possibleNextCells[i].row][possibleNextCells[i].col] = i;
+        let a = [...route];
+        a.push(possibleNextCells[i]);
+        if (isCellAtTheEnd(possibleNextCells[i])) {
+            //console.log('return '+possibleNextCells[i].toString());
+            return a
+        }
+        //if (level < 10) {
+        if (level < matrix_width + matrix_height + 1) {
+            found_route = createRoute(a, level + 1);
+            if (found_route != null) {
+                return found_route;
+            }
+        } else {
+            //console.log('');
+            //console.log(`Level = ${level} i=${i} Route = ${a.toString()}`);
+            //displayMatrixRoute(matrix, a);
+        }
+    }
+    return null;
 }
 
 function letterLabyrinth() {
-    console.log('letterLabyrinth');
+    //console.log('letterLabyrinth');
+    let startDate = new Date();
     init();
     let i = 0;
     do {
-        generateStartAndEnd();
+        createStartAndEnd();
         i++;
     } while (i < 10 && !isStartAndEndOK());
     if (!isStartAndEndOK()) {
         console.log('Sorry, something went wrong during the creation - please try again!');
         return;
     }
+    changeStartAndEndWhenNeeded();
     matrix[startCell.row][startCell.col] = 'S';
     matrix[endCell.row][endCell.col] = 'E';
-    displayMatrix();
+    //createRoute([startCell, startCell]);
+    let route = createRoute([startCell], 0);
+    if (route != null) {
+        //console.log('FOUND!!!');
+        displayMatrixRoute(matrix, route);
+    } else {
+        console.log('not found ...');
+    }
+    let endDate = new Date();
+    let timeElapsed = endDate.getMilliseconds() - startDate.getMilliseconds();
+    console.log(`Elapsed ${timeElapsed} milliseconds`);
+    //console.log('');
+    //displayMatrix();
 }
 
 module.exports = {
