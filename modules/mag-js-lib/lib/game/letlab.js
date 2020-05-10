@@ -5,12 +5,16 @@ var characters;
 var start_end_distance;
 var matrix;
 var startCell, endCell;
+var minRouteLength;
+var minLegLength;
 
 function init() {
     matrix_width = 9;
     matrix_height = 9;
     characters = ['X', '0'];
     start_end_distance = 5;
+    minRouteLength = (matrix_width + matrix_height) * 1.4142;
+    minLegLength = 2;
     initMatrix();
 }
 
@@ -144,6 +148,40 @@ class Cell {
     }
 }
 
+// function isLegLengthOK(route, cell) {
+//     //if (route.length < minLegLength) return true;
+//     if (route.length < 3) return true;
+//     if (isCellAtTheEnd(cell)) return true;
+//     let lastCellInRoute = route[route.length - 1];
+//     if (cell.row == lastCellInRoute.row) {
+//         if (cell.col < lastCellInRoute.col) {
+//             //check left to right
+//             for (let i = 2; i <= minLegLength; i++) {
+//                 if (route[route.length - i].row != cell.row) return false;
+//             }
+//         } else {
+//             //check right to left
+//             for (let i = 2; i <= minLegLength; i++) {
+//                 if (route[route.length - i].row != cell.row) return false;
+//             }
+//         }
+//     }
+//     if (cell.col == lastCellInRoute.col) {
+//         if (cell.row < lastCellInRoute.row) {
+//             //check top to bottom
+//             for (let i = 2; i <= minLegLength; i++) {
+//                 if (route[route.length - i].col != cell.col) return false;
+//             }
+//         } else {
+//             //check bottom to top
+//             for (let i = 2; i <= minLegLength; i++) {
+//                 if (route[route.length - i].col != cell.col) return false;
+//             }
+//         }
+//     }
+//     return true;
+// }
+
 function isCellOkToRoute(route, cell) {
     for (let i = 0; i < route.length - 2; i++) {
         if (cell.row == route[i].row && cell.col == route[i].col) return false;
@@ -156,7 +194,13 @@ function isCellOkToRoute(route, cell) {
         if (cell.row == route[i].row + 1 && cell.col == route[i].col) return false;
         if (cell.row == route[i].row + 1 && cell.col == route[i].col - 1) return false;
         if (cell.row == route[i].row && cell.col == route[i].col - 1) return false;
+
+        if (cell.row == endCell.row - 1 && cell.col == endCell.col - 1) return false;
+        if (cell.row == endCell.row + 1 && cell.col == endCell.col - 1) return false;
+        if (cell.row == endCell.row + 1 && cell.col == endCell.col + 1) return false;
+        if (cell.row == endCell.row - 1 && cell.col == endCell.col + 1) return false;
     }
+    //if (!isLegLengthOK(route, cell)) return false;
     return true;
 }
 
@@ -171,6 +215,27 @@ function isCellAtTheEnd(cell) {
     if (cell.row == endCell.row + 1 && cell.col == endCell.col) return true;
     if (cell.row == endCell.row && cell.col == endCell.col + 1) return true;
     return false
+}
+
+function isLegLengthsAreOK(route) {
+    // let r = [];
+    let lastCorner = -1;
+    for (let i = 0; i < route.length; i++) {
+        if (i == 0 || i == route.length - 1) {
+            // r.push(1);
+        } else {
+            if ((route[i].row == route[i - 1].row && route[i].col == route[i + 1].col) || (route[i].col == route[i - 1].col && route[i].row == route[i + 1].row)) {
+                // r.push(1);
+                if (lastCorner > 0) {
+                    if (i - lastCorner < minLegLength) return false;
+                }
+                lastCorner = i;
+            } else {
+                // r.push(0);
+            }
+        }
+    }
+    return true;
 }
 
 function createRoute(route, level) {
@@ -210,6 +275,7 @@ function createRoute(route, level) {
             possibleNextCells.push(cell);
         }
     }
+    possibleNextCells.sort(function () { return 0.5 - Math.random() });
     let found_route = null;
     //console.log(possibleNextCells.toString());
     //console.log(`Level = ${level} lastCellInRoute = ${lastCellInRoute.toString()} possibleNextCells = ${possibleNextCells.toString()}`);
@@ -220,10 +286,16 @@ function createRoute(route, level) {
         a.push(possibleNextCells[i]);
         if (isCellAtTheEnd(possibleNextCells[i])) {
             //console.log('return '+possibleNextCells[i].toString());
-            return a
+            if (a.length >= minRouteLength && isLegLengthsAreOK(a)) {
+                return a;
+            } else {
+                return null;
+            }
         }
         //if (level < 10) {
-        if (level < matrix_width + matrix_height + 1) {
+        //if (level < matrix_width + matrix_height + 1) {
+        if (level < minRouteLength + 1) {
+            //if (level < 100) {
             found_route = createRoute(a, level + 1);
             if (found_route != null) {
                 return found_route;
@@ -262,7 +334,9 @@ function letterLabyrinth() {
         console.log('not found ...');
     }
     let endDate = new Date();
-    let timeElapsed = endDate.getMilliseconds() - startDate.getMilliseconds();
+    let timeElapsed = endDate.getTime() - startDate.getTime();
+    // console.log(`startDate ${startDate.getMilliseconds()} milliseconds`);
+    // console.log(`endDate ${endDate.getMilliseconds()} milliseconds`);
     console.log(`Elapsed ${timeElapsed} milliseconds`);
     //console.log('');
     //displayMatrix();
