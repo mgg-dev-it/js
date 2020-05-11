@@ -342,6 +342,11 @@ function letterLabyrinth() {
     //displayMatrix();
 }
 
+function test(param) {
+    return param;
+}
+
 module.exports = {
-    letterLabyrinth: letterLabyrinth
+    letterLabyrinth: letterLabyrinth,
+    test: test
 };
