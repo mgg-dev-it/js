@@ -43,6 +43,17 @@ function displayMatrix() {
     console.log(s);
 }
 
+function logMatrix(m) {
+    var s = '';
+    for (let iRow = 0; iRow < m.length; iRow++) {
+        //if (iRow > 0) s += '\n';
+        if (iRow > 0) s += '\n\n';
+        //s += '[' + m[iRow].join('][') + ']';
+        s += '  ' + m[iRow].join('  ') + ' ';
+    }
+    console.log(s);
+}
+
 function displayMatrixRoute(matrix, route) {
     let m = [];
     for (let row = 0; row < matrix.length; row++) {
@@ -63,6 +74,36 @@ function displayMatrixRoute(matrix, route) {
         s += '[' + m[iRow].join('][') + ']';
     }
     console.log(s);
+}
+
+function getRandomBackgroundCaracter() {
+    if (characters.length == 2) return characters[1];
+    return characters[1 + Math.floor(Math.random() * (characters.length - 1))];
+}
+
+function getMatrixWithRoute(matrix, route) {
+    let rowString = ' '.repeat(matrix_width);
+    let m = [];
+    for (let i = 0; i < matrix_height; i++) {
+        let rowArray = rowString.split('');
+        m.push(rowArray);
+    }
+
+    for (let iRow = 0; iRow < matrix_height; iRow++) {
+        for (let iCol = 0; iCol < matrix_width; iCol++) {
+            m[iRow][iCol] = getRandomBackgroundCaracter();
+        }
+    }
+
+    m[startCell.row][startCell.col] = characters[0].toUpperCase();
+    for (let i = 0; i < route.length; i++) {
+        if (!route[i].equals(startCell)) {
+            m[route[i].row][route[i].col] = characters[0];
+        }
+    }
+    m[endCell.row][endCell.col] = characters[0].toUpperCase();
+    //console.log(m.toString());
+    return m;
 }
 
 function createStartAndEnd() {
@@ -342,11 +383,100 @@ function letterLabyrinth() {
     //displayMatrix();
 }
 
+function createEndPoints() {
+    let i = 0;
+    do {
+        createStartAndEnd();
+        i++;
+    } while (i < 10 && !isStartAndEndOK());
+    if (!isStartAndEndOK()) {
+        console.log('Sorry, something went wrong during the creation - please try again!');
+        return;
+    }
+    changeStartAndEndWhenNeeded();
+}
+
+function generateMatrix(p_matrix_width, p_matrix_height, p_characters) {
+    let retMatrix = null;
+    matrix_width = p_matrix_width;
+    matrix_height = p_matrix_height;
+    characters = p_characters.split('');
+
+    //    console.log(characters.toString());
+
+    if (matrix_width < 5) matrix_width = 5;
+    if (matrix_width > 9) matrix_width = 9;
+    if (matrix_height < 5) matrix_height = 5;
+    if (matrix_height > 9) matrix_height = 9;
+
+    if (characters.length == 0) characters = ['X', 'O'];
+    if (characters.length == 1) characters.push(characters[0] == 'O' ? 'X' : 'O');
+
+    start_end_distance = 5;
+    minRouteLength = (matrix_width + matrix_height) * 1.4142;
+    minLegLength = 2;
+    initMatrix();
+    createEndPoints();
+    matrix[startCell.row][startCell.col] = 'S';
+    matrix[endCell.row][endCell.col] = 'E';
+    //createRoute([startCell, startCell]);
+    let route = createRoute([startCell], 0);
+    if (route != null) {
+        //console.log('FOUND!!!');
+        retMatrix = getMatrixWithRoute(matrix, route);
+    } else {
+        console.log('not found ...');
+    }
+    return retMatrix;
+}
+
+function generateHTML(p_matrix_width, p_matrix_height, p_characters) {
+    let m = generateMatrix(p_matrix_width, p_matrix_height, p_characters);
+    logMatrix(m);
+    let retHTML = '';
+    return retHTML;
+}
+
 function test(param) {
     return param;
 }
 
+function createHTMLFromMatrix(m) {
+    let retHTML = '';
+    retHTML += `<div style="display:grid; grid-template-columns: repeat(${matrix_width}, 50px); grid-template-rows: repeat(${matrix_height}, 50px);">`;
+    for (let iRow = 0; iRow < matrix_height; iRow++) {
+        if (iRow > 0) retHTML += '\n';
+        for (let iCol = 0; iCol < matrix_width; iCol++) {
+            retHTML += '<div style="border: 1px solid red;">' + m[iRow][iCol] + '</div>\n';
+        }
+    }
+    retHTML += '</div>';
+    return retHTML;
+}
+
+function consoleHtmlTest() {
+    let m = generateMatrix(9, 9, 'pb');
+    if (m != null) console.log(createHTMLFromMatrix(m));
+}
+
+function consoleTest() {
+    //let m = generateMatrix(9, 9, 'X0');
+    //let m = generateMatrix(9, 9, 'X01');
+    //let m = generateMatrix(9, 9, 'pbq');
+    let m = generateMatrix(9, 9, 'pb');
+    //let m = generateMatrix(9, 9, 'pq');
+    if (m != null) logMatrix(m);
+    // console.log(getRandomBackgroundCaracter());
+    // console.log(getRandomBackgroundCaracter());
+    // console.log(getRandomBackgroundCaracter());
+    // console.log(getRandomBackgroundCaracter());
+    // console.log(getRandomBackgroundCaracter());
+    // console.log(getRandomBackgroundCaracter());
+    // console.log(getRandomBackgroundCaracter());
+}
+
 module.exports = {
     letterLabyrinth: letterLabyrinth,
-    test: test
+    consoleTest: consoleTest,
+    consoleHtmlTest: consoleHtmlTest
 };
