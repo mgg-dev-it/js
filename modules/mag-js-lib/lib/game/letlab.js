@@ -432,8 +432,8 @@ function generateMatrix(p_matrix_width, p_matrix_height, p_characters) {
 
 function generateHTML(p_matrix_width, p_matrix_height, p_characters) {
     let m = generateMatrix(p_matrix_width, p_matrix_height, p_characters);
-    logMatrix(m);
     let retHTML = '';
+    if (m != null) retHTML = createHTMLFromMatrix(m);
     return retHTML;
 }
 
