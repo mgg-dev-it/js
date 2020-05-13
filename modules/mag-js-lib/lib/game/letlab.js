@@ -430,10 +430,31 @@ function generateMatrix(p_matrix_width, p_matrix_height, p_characters) {
     return retMatrix;
 }
 
-function generateHTML(p_matrix_width, p_matrix_height, p_characters) {
+function generateHTML(p_matrix_width, p_matrix_height, p_characters, cellsize) {
     let m = generateMatrix(p_matrix_width, p_matrix_height, p_characters);
     let retHTML = '';
-    if (m != null) retHTML = createHTMLFromMatrix(m);
+    if (m != null) retHTML = createHTMLFromMatrix(m, cellsize);
+    return retHTML;
+}
+
+function generateEmptyHTML(p_matrix_width, p_matrix_height, cellsize) {
+    matrix_width = p_matrix_width;
+    matrix_height = p_matrix_height;
+
+    if (matrix_width < 5) matrix_width = 5;
+    if (matrix_width > 9) matrix_width = 9;
+    if (matrix_height < 5) matrix_height = 5;
+    if (matrix_height > 9) matrix_height = 9;
+
+    let rowString = ' '.repeat(matrix_width);
+    let m = [];
+    for (let i = 0; i < matrix_height; i++) {
+        let rowArray = rowString.split('');
+        m.push(rowArray);
+    }
+
+    let retHTML = '';
+    if (m != null) retHTML = createHTMLFromMatrix(m, cellsize);
     return retHTML;
 }
 
@@ -441,13 +462,17 @@ function test(param) {
     return param;
 }
 
-function createHTMLFromMatrix(m) {
+function createHTMLFromMatrix(m, cellsize) {
     let retHTML = '';
-    retHTML += `<div style="display:grid; grid-template-columns: repeat(${matrix_width}, 50px); grid-template-rows: repeat(${matrix_height}, 50px);">`;
+    retHTML += `<div style="display:grid; grid-template-columns: repeat(${matrix_width}, ${cellsize}px); grid-template-rows: repeat(${matrix_height}, ${cellsize}px); width:${matrix_width*cellsize+20}px; height:${matrix_width*cellsize+20}px; padding:10px; background:white; border-radius:4px">`;
     for (let iRow = 0; iRow < matrix_height; iRow++) {
         if (iRow > 0) retHTML += '\n';
         for (let iCol = 0; iCol < matrix_width; iCol++) {
-            retHTML += '<div style="border: 1px solid red;">' + m[iRow][iCol] + '</div>\n';
+            //retHTML += '<div style="border: 1px solid grey;"><span style="font-size:32px; text_align:center; vertical-align:-30px;">' + m[iRow][iCol] + '</span></div>\n';
+            let border = "border-left: 1px solid grey; border-top: 1px solid grey;";
+            if(iCol == matrix_width-1) border += " border-right: 1px solid grey;";
+            if(iRow == matrix_height-1) border += " border-bottom: 1px solid grey;";
+            retHTML += `<div style="${border}"><span style="font-size:32px; text_align:center; vertical-align:-30px;">${m[iRow][iCol]}</span></div>\n`;
         }
     }
     retHTML += '</div>';
