@@ -85,9 +85,9 @@ function do_on_request_doneInProc(rowCount, more, rows) {
     console.log(rows);
 }
 
-function do_on_request_requestCompleted() {
-    console.log("do_on_request_requestCompleted");
-}
+// function do_on_request_requestCompleted() {
+//     console.log("do_on_request_requestCompleted");
+// }
 
 function disconnect() {
     conn.close();
