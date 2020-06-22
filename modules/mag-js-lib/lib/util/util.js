@@ -17,6 +17,14 @@ function initArray(val, count) {
     return a;
 }
 
+function stringToArray(str){
+    let ret = [];
+    for (let i = 0; i < str.length; i++) {
+        ret.push(str.charCodeAt(i));
+    }
+    return ret;
+}
+
 //https://gist.github.com/lihnux/2aa4a6f5a9170974f6aa
 function toUTF8Array(str) {
     let utf8 = [];
@@ -80,6 +88,7 @@ function arrayCopy(srcPts, srcOff, dstPts, dstOff, size) {
 module.exports = {
     isEmpty: isEmpty,
     initArray: initArray,
+    stringToArray: stringToArray,
     toUTF8Array: toUTF8Array,
     toHexString: toHexString,
     logArray: logArray,

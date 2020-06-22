@@ -633,8 +633,10 @@ function reset() {
 function Encrypt(src) {
     init();
 
+    // console.log(src);
     //util.logArray(str2ab(src));
-    //util.logArray(toUTF8Array(src));
+    // util.logArray(util.stringToArray(src));
+    // util.logArray(util.toUTF8Array(src));
 
     //var h = new EncryptPwHaval(EncryptPwHaval.HAVAL_256_BIT, EncryptPwHaval.HAVAL_5_ROUND);
     if (src != null && src.length > 0) {
@@ -652,10 +654,656 @@ function Encrypt(src) {
     //return(src);
 };
 
+function stringToArrayOld(str) {
+    let ret = [];
+    for (let i = 0; i < str.length; i++) {
+        ret.push(str.charCodeAt(i));
+        if (ret[ret.length - 1] == 337) ret[ret.length - 1] = 245; //ő
+        if (ret[ret.length - 1] == 369) ret[ret.length - 1] = 251; //ű
+        if (ret[ret.length - 1] == 336) ret[ret.length - 1] = 213; //Ő
+        if (ret[ret.length - 1] == 368) ret[ret.length - 1] = 219; //Ű
+    }
+    return ret;
+}
+
+function EncryptOld(src) {
+    init();
+
+    if (src != null && src.length > 0) {
+        update$byte_A(stringToArrayOld(src));
+    }
+    var d = digest();
+    return (util.toHexString(d));
+};
 
 
+//@todo
+class Haval {
 
+    HAVAL_HASH = "haval";
+    HAVAL_VERSION = 1;
 
+    HAVAL_128_BIT = 16;
+    HAVAL_160_BIT = 20;
+    HAVAL_192_BIT = 24;
+    HAVAL_224_BIT = 28;
+    HAVAL_256_BIT = 32;
+
+    HAVAL_3_ROUND = 3;
+    HAVAL_4_ROUND = 4;
+    HAVAL_5_ROUND = 5;
+
+    BLOCK_SIZE = 128; // inner block size in bytes
+
+// constructor() {
+//     this.name = HAVAL_HASH;
+//     this.hashSize = HAVAL_256_BIT;
+//     this.blockSize = BLOCK_SIZE;
+//     this.count = 0;
+//     this.rounds = HAVAL_5_ROUND;
+//     this.buffer = util.initArray(0, blockSize);
+//     this.h0 = 0;
+//     this.h1 = 0;
+//     this.h2 = 0;
+//     this.h3 = 0;
+//     this.h4 = 0;
+//     this.h5 = 0;
+//     this.h6 = 0;
+//     this.h7 = 0;
+// };
+
+    constructor(hashSize, rounds) {
+        this.hashSize = HAVAL_256_BIT;
+        if(typeof hashSize !== 'undefined'){
+            this.hashSize = hashSize;
+        }
+        this.rounds = HAVAL_5_ROUND;
+        if(typeof rounds !== 'undefined'){
+            this.rounds = rounds;
+        }
+
+        this.name = HAVAL_HASH;
+        this.blockSize = BLOCK_SIZE;
+        this.count = 0;
+        this.rounds = rounds;
+        this.buffer = util.initArray(0, blockSize);
+        this.h0 = 0;
+        this.h1 = 0;
+        this.h2 = 0;
+        this.h3 = 0;
+        this.h4 = 0;
+        this.h5 = 0;
+        this.h6 = 0;
+        this.h7 = 0;
+    };
+
+    transform(__in, i) {
+        var X0 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X1 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X2 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X3 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X4 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X5 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X6 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X7 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X8 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X9 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X10 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X11 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X12 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X13 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X14 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X15 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X16 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X17 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X18 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X19 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X20 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X21 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X22 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X23 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X24 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X25 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X26 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X27 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X28 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X29 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X30 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var X31 = (__in[i++] & 255) | (__in[i++] & 255) << 8 | (__in[i++] & 255) << 16 | (__in[i++] & 255) << 24;
+        var t0 = h0;
+        var t1 = h1;
+        var t2 = h2;
+        var t3 = h3;
+        var t4 = h4;
+        var t5 = h5;
+        var t6 = h6;
+        var t7 = h7;
+        t7 = FF1(t7, t6, t5, t4, t3, t2, t1, t0, X0);
+        t6 = FF1(t6, t5, t4, t3, t2, t1, t0, t7, X1);
+        t5 = FF1(t5, t4, t3, t2, t1, t0, t7, t6, X2);
+        t4 = FF1(t4, t3, t2, t1, t0, t7, t6, t5, X3);
+        t3 = FF1(t3, t2, t1, t0, t7, t6, t5, t4, X4);
+        t2 = FF1(t2, t1, t0, t7, t6, t5, t4, t3, X5);
+        t1 = FF1(t1, t0, t7, t6, t5, t4, t3, t2, X6);
+        t0 = FF1(t0, t7, t6, t5, t4, t3, t2, t1, X7);
+        t7 = FF1(t7, t6, t5, t4, t3, t2, t1, t0, X8);
+        t6 = FF1(t6, t5, t4, t3, t2, t1, t0, t7, X9);
+        t5 = FF1(t5, t4, t3, t2, t1, t0, t7, t6, X10);
+        t4 = FF1(t4, t3, t2, t1, t0, t7, t6, t5, X11);
+        t3 = FF1(t3, t2, t1, t0, t7, t6, t5, t4, X12);
+        t2 = FF1(t2, t1, t0, t7, t6, t5, t4, t3, X13);
+        t1 = FF1(t1, t0, t7, t6, t5, t4, t3, t2, X14);
+        t0 = FF1(t0, t7, t6, t5, t4, t3, t2, t1, X15);
+        t7 = FF1(t7, t6, t5, t4, t3, t2, t1, t0, X16);
+        t6 = FF1(t6, t5, t4, t3, t2, t1, t0, t7, X17);
+        t5 = FF1(t5, t4, t3, t2, t1, t0, t7, t6, X18);
+        t4 = FF1(t4, t3, t2, t1, t0, t7, t6, t5, X19);
+        t3 = FF1(t3, t2, t1, t0, t7, t6, t5, t4, X20);
+        t2 = FF1(t2, t1, t0, t7, t6, t5, t4, t3, X21);
+        t1 = FF1(t1, t0, t7, t6, t5, t4, t3, t2, X22);
+        t0 = FF1(t0, t7, t6, t5, t4, t3, t2, t1, X23);
+        t7 = FF1(t7, t6, t5, t4, t3, t2, t1, t0, X24);
+        t6 = FF1(t6, t5, t4, t3, t2, t1, t0, t7, X25);
+        t5 = FF1(t5, t4, t3, t2, t1, t0, t7, t6, X26);
+        t4 = FF1(t4, t3, t2, t1, t0, t7, t6, t5, X27);
+        t3 = FF1(t3, t2, t1, t0, t7, t6, t5, t4, X28);
+        t2 = FF1(t2, t1, t0, t7, t6, t5, t4, t3, X29);
+        t1 = FF1(t1, t0, t7, t6, t5, t4, t3, t2, X30);
+        t0 = FF1(t0, t7, t6, t5, t4, t3, t2, t1, X31);
+        t7 = FF2(t7, t6, t5, t4, t3, t2, t1, t0, X5, 1160258022);
+        t6 = FF2(t6, t5, t4, t3, t2, t1, t0, t7, X14, 953160567);
+        t5 = FF2(t5, t4, t3, t2, t1, t0, t7, t6, X26, -1101764913);
+        t4 = FF2(t4, t3, t2, t1, t0, t7, t6, t5, X18, 887688300);
+        t3 = FF2(t3, t2, t1, t0, t7, t6, t5, t4, X11, -1062458953);
+        t2 = FF2(t2, t1, t0, t7, t6, t5, t4, t3, X28, -914599715);
+        t1 = FF2(t1, t0, t7, t6, t5, t4, t3, t2, X7, 1065670069);
+        t0 = FF2(t0, t7, t6, t5, t4, t3, t2, t1, X16, -1253635817);
+        t7 = FF2(t7, t6, t5, t4, t3, t2, t1, t0, X0, -1843997223);
+        t6 = FF2(t6, t5, t4, t3, t2, t1, t0, t7, X23, -1988494565);
+        t5 = FF2(t5, t4, t3, t2, t1, t0, t7, t6, X20, -785314906);
+        t4 = FF2(t4, t3, t2, t1, t0, t7, t6, t5, X22, -1730169428);
+        t3 = FF2(t3, t2, t1, t0, t7, t6, t5, t4, X1, 805139163);
+        t2 = FF2(t2, t1, t0, t7, t6, t5, t4, t3, X10, -803545161);
+        t1 = FF2(t1, t0, t7, t6, t5, t4, t3, t2, X4, -1193168915);
+        t0 = FF2(t0, t7, t6, t5, t4, t3, t2, t1, X8, 1780907670);
+        t7 = FF2(t7, t6, t5, t4, t3, t2, t1, t0, X30, -1166241723);
+        t6 = FF2(t6, t5, t4, t3, t2, t1, t0, t7, X3, -248741991);
+        t5 = FF2(t5, t4, t3, t2, t1, t0, t7, t6, X21, 614570311);
+        t4 = FF2(t4, t3, t2, t1, t0, t7, t6, t5, X9, -1282315017);
+        t3 = FF2(t3, t2, t1, t0, t7, t6, t5, t4, X17, 134345442);
+        t2 = FF2(t2, t1, t0, t7, t6, t5, t4, t3, X24, -2054226922);
+        t1 = FF2(t1, t0, t7, t6, t5, t4, t3, t2, X29, 1667834072);
+        t0 = FF2(t0, t7, t6, t5, t4, t3, t2, t1, X6, 1901547113);
+        t7 = FF2(t7, t6, t5, t4, t3, t2, t1, t0, X19, -1537671517);
+        t6 = FF2(t6, t5, t4, t3, t2, t1, t0, t7, X12, -191677058);
+        t5 = FF2(t5, t4, t3, t2, t1, t0, t7, t6, X15, 227898511);
+        t4 = FF2(t4, t3, t2, t1, t0, t7, t6, t5, X13, 1921955416);
+        t3 = FF2(t3, t2, t1, t0, t7, t6, t5, t4, X2, 1904987480);
+        t2 = FF2(t2, t1, t0, t7, t6, t5, t4, t3, X25, -2112533778);
+        t1 = FF2(t1, t0, t7, t6, t5, t4, t3, t2, X31, 2069144605);
+        t0 = FF2(t0, t7, t6, t5, t4, t3, t2, t1, X27, -1034266187);
+        t7 = FF3(t7, t6, t5, t4, t3, t2, t1, t0, X19, -1674521287);
+        t6 = FF3(t6, t5, t4, t3, t2, t1, t0, t7, X9, 720527379);
+        t5 = FF3(t5, t4, t3, t2, t1, t0, t7, t6, X4, -976113629);
+        t4 = FF3(t4, t3, t2, t1, t0, t7, t6, t5, X20, 677414384);
+        t3 = FF3(t3, t2, t1, t0, t7, t6, t5, t4, X28, -901678824);
+        t2 = FF3(t2, t1, t0, t7, t6, t5, t4, t3, X17, -1193592593);
+        t1 = FF3(t1, t0, t7, t6, t5, t4, t3, t2, X8, -1904616272);
+        t0 = FF3(t0, t7, t6, t5, t4, t3, t2, t1, X22, 1614419982);
+        t7 = FF3(t7, t6, t5, t4, t3, t2, t1, t0, X29, 1822297739);
+        t6 = FF3(t6, t5, t4, t3, t2, t1, t0, t7, X14, -1340175810);
+        t5 = FF3(t5, t4, t3, t2, t1, t0, t7, t6, X25, -686458943);
+        t4 = FF3(t4, t3, t2, t1, t0, t7, t6, t5, X12, -1120842969);
+        t3 = FF3(t3, t2, t1, t0, t7, t6, t5, t4, X24, 2024746970);
+        t2 = FF3(t2, t1, t0, t7, t6, t5, t4, t3, X30, 1432378464);
+        t1 = FF3(t1, t0, t7, t6, t5, t4, t3, t2, X16, -430627341);
+        t0 = FF3(t0, t7, t6, t5, t4, t3, t2, t1, X26, -1437226092);
+        t7 = FF3(t7, t6, t5, t4, t3, t2, t1, t0, X31, 1464375394);
+        t6 = FF3(t6, t5, t4, t3, t2, t1, t0, t7, X15, 1676153920);
+        t5 = FF3(t5, t4, t3, t2, t1, t0, t7, t6, X7, 1439316330);
+        t4 = FF3(t4, t3, t2, t1, t0, t7, t6, t5, X3, 715854006);
+        t3 = FF3(t3, t2, t1, t0, t7, t6, t5, t4, X1, -1261675468);
+        t2 = FF3(t2, t1, t0, t7, t6, t5, t4, t3, X0, 289532110);
+        t1 = FF3(t1, t0, t7, t6, t5, t4, t3, t2, X18, -1588296017);
+        t0 = FF3(t0, t7, t6, t5, t4, t3, t2, t1, X27, 2087905683);
+        t7 = FF3(t7, t6, t5, t4, t3, t2, t1, t0, X13, -1276242927);
+        t6 = FF3(t6, t5, t4, t3, t2, t1, t0, t7, X6, 1668267050);
+        t5 = FF3(t5, t4, t3, t2, t1, t0, t7, t6, X21, 732546397);
+        t4 = FF3(t4, t3, t2, t1, t0, t7, t6, t5, X10, 1947742710);
+        t3 = FF3(t3, t2, t1, t0, t7, t6, t5, t4, X23, -832815594);
+        t2 = FF3(t2, t1, t0, t7, t6, t5, t4, t3, X11, -1685613794);
+        t1 = FF3(t1, t0, t7, t6, t5, t4, t3, t2, X5, -1344882125);
+        t0 = FF3(t0, t7, t6, t5, t4, t3, t2, t1, X2, 1814351708);
+        if (rounds >= 4) {
+            t7 = FF4(t7, t6, t5, t4, t3, t2, t1, t0, X24, 2050118529);
+            t6 = FF4(t6, t5, t4, t3, t2, t1, t0, t7, X4, 680887927);
+            t5 = FF4(t5, t4, t3, t2, t1, t0, t7, t6, X0, 999245976);
+            t4 = FF4(t4, t3, t2, t1, t0, t7, t6, t5, X14, 1800124847);
+            t3 = FF4(t3, t2, t1, t0, t7, t6, t5, t4, X2, -994056165);
+            t2 = FF4(t2, t1, t0, t7, t6, t5, t4, t3, X7, 1713906067);
+            t1 = FF4(t1, t0, t7, t6, t5, t4, t3, t2, X28, 1641548236);
+            t0 = FF4(t0, t7, t6, t5, t4, t3, t2, t1, X23, -81679983);
+            t7 = FF4(t7, t6, t5, t4, t3, t2, t1, t0, X26, 1216130144);
+            t6 = FF4(t6, t5, t4, t3, t2, t1, t0, t7, X6, 1575780402);
+            t5 = FF4(t5, t4, t3, t2, t1, t0, t7, t6, X30, -276538019);
+            t4 = FF4(t4, t3, t2, t1, t0, t7, t6, t5, X20, -377129551);
+            t3 = FF4(t3, t2, t1, t0, t7, t6, t5, t4, X18, -601480446);
+            t2 = FF4(t2, t1, t0, t7, t6, t5, t4, t3, X25, -345695352);
+            t1 = FF4(t1, t0, t7, t6, t5, t4, t3, t2, X19, 596196993);
+            t0 = FF4(t0, t7, t6, t5, t4, t3, t2, t1, X3, -745100091);
+            t7 = FF4(t7, t6, t5, t4, t3, t2, t1, t0, X22, 258830323);
+            t6 = FF4(t6, t5, t4, t3, t2, t1, t0, t7, X11, -2081144263);
+            t5 = FF4(t5, t4, t3, t2, t1, t0, t7, t6, X31, 772490370);
+            t4 = FF4(t4, t3, t2, t1, t0, t7, t6, t5, X21, -1534844924);
+            t3 = FF4(t3, t2, t1, t0, t7, t6, t5, t4, X8, 1774776394);
+            t2 = FF4(t2, t1, t0, t7, t6, t5, t4, t3, X27, -1642095778);
+            t1 = FF4(t1, t0, t7, t6, t5, t4, t3, t2, X12, 566650946);
+            t0 = FF4(t0, t7, t6, t5, t4, t3, t2, t1, X9, -152474470);
+            t7 = FF4(t7, t6, t5, t4, t3, t2, t1, t0, X1, 1728879713);
+            t6 = FF4(t6, t5, t4, t3, t2, t1, t0, t7, X29, -1412200208);
+            t5 = FF4(t5, t4, t3, t2, t1, t0, t7, t6, X5, 1783734482);
+            t4 = FF4(t4, t3, t2, t1, t0, t7, t6, t5, X15, -665571480);
+            t3 = FF4(t3, t2, t1, t0, t7, t6, t5, t4, X17, -1777359064);
+            t2 = FF4(t2, t1, t0, t7, t6, t5, t4, t3, X10, -1420741725);
+            t1 = FF4(t1, t0, t7, t6, t5, t4, t3, t2, X16, 1861159788);
+            t0 = FF4(t0, t7, t6, t5, t4, t3, t2, t1, X13, 326777828);
+            if (rounds === 5) {
+                t7 = FF5(t7, t6, t5, t4, t3, t2, t1, t0, X27, -1170476976);
+                t6 = FF5(t6, t5, t4, t3, t2, t1, t0, t7, X3, 2130389656);
+                t5 = FF5(t5, t4, t3, t2, t1, t0, t7, t6, X21, -1578015459);
+                t4 = FF5(t4, t3, t2, t1, t0, t7, t6, t5, X26, 967770486);
+                t3 = FF5(t3, t2, t1, t0, t7, t6, t5, t4, X17, 1724537150);
+                t2 = FF5(t2, t1, t0, t7, t6, t5, t4, t3, X11, -2109534584);
+                t1 = FF5(t1, t0, t7, t6, t5, t4, t3, t2, X20, -1930525159);
+                t0 = FF5(t0, t7, t6, t5, t4, t3, t2, t1, X29, 1164943284);
+                t7 = FF5(t7, t6, t5, t4, t3, t2, t1, t0, X19, 2105845187);
+                t6 = FF5(t6, t5, t4, t3, t2, t1, t0, t7, X0, 998989502);
+                t5 = FF5(t5, t4, t3, t2, t1, t0, t7, t6, X12, -529566248);
+                t4 = FF5(t4, t3, t2, t1, t0, t7, t6, t5, X7, -2050940813);
+                t3 = FF5(t3, t2, t1, t0, t7, t6, t5, t4, X13, 1075463327);
+                t2 = FF5(t2, t1, t0, t7, t6, t5, t4, t3, X8, 1455516326);
+                t1 = FF5(t1, t0, t7, t6, t5, t4, t3, t2, X31, 1322494562);
+                t0 = FF5(t0, t7, t6, t5, t4, t3, t2, t1, X10, 910128902);
+                t7 = FF5(t7, t6, t5, t4, t3, t2, t1, t0, X5, 469688178);
+                t6 = FF5(t6, t5, t4, t3, t2, t1, t0, t7, X9, 1117454909);
+                t5 = FF5(t5, t4, t3, t2, t1, t0, t7, t6, X14, 936433444);
+                t4 = FF5(t4, t3, t2, t1, t0, t7, t6, t5, X30, -804646328);
+                t3 = FF5(t3, t2, t1, t0, t7, t6, t5, t4, X18, -619713837);
+                t2 = FF5(t2, t1, t0, t7, t6, t5, t4, t3, X6, 1240580251);
+                t1 = FF5(t1, t0, t7, t6, t5, t4, t3, t2, X28, 122909385);
+                t0 = FF5(t0, t7, t6, t5, t4, t3, t2, t1, X24, -2137449605);
+                t7 = FF5(t7, t6, t5, t4, t3, t2, t1, t0, X2, 634681816);
+                t6 = FF5(t6, t5, t4, t3, t2, t1, t0, t7, X23, -152510729);
+                t5 = FF5(t5, t4, t3, t2, t1, t0, t7, t6, X16, -469872614);
+                t4 = FF5(t4, t3, t2, t1, t0, t7, t6, t5, X22, -1233564613);
+                t3 = FF5(t3, t2, t1, t0, t7, t6, t5, t4, X4, -1754472259);
+                t2 = FF5(t2, t1, t0, t7, t6, t5, t4, t3, X1, 79693498);
+                t1 = FF5(t1, t0, t7, t6, t5, t4, t3, t2, X25, -1045868618);
+                t0 = FF5(t0, t7, t6, t5, t4, t3, t2, t1, X15, 1084186820);
+            }
+        }
+        h7 += t7;
+        h6 += t6;
+        h5 += t5;
+        h4 += t4;
+        h3 += t3;
+        h2 += t2;
+        h1 += t1;
+        h0 += t0;
+    };
+
+    padBuffer() {
+        var n = ((count % BLOCK_SIZE) | 0);
+        var padding = (n < 118) ? (118 - n) : (246 - n);
+        var result = (function (s) {
+            var a = []; while (s-- > 0)
+                a.push(0); return a;
+        })(padding + 10);
+        result[0] = 255 & (1 | 0);
+        var bl = hashSize * 8;
+        result[padding++] = 255 & ((((bl & 3) << 6) | ((rounds & 7) << 3) | (HAVAL_VERSION & 7)) | 0);
+        result[padding++] = 255 & ((bl >>> 2) | 0);
+        var bits = count << 3;
+        result[padding++] = 255 & (bits | 0);
+        bits = bits >>> 8;
+        result[padding++] = 255 & (bits | 0);
+        bits = bits >>> 8;
+        result[padding++] = 255 & (bits | 0);
+        bits = bits >>> 8;
+        result[padding++] = 255 & (bits | 0);
+        bits = bits >>> 8;
+        result[padding++] = 255 & (bits | 0);
+        bits = bits >>> 8;
+        result[padding++] = 255 & (bits | 0);
+        bits = bits >>> 8;
+        result[padding++] = 255 & (bits | 0);
+        bits = bits >>> 8;
+        result[padding++] = 255 & (bits | 0);
+        return result;
+    };
+
+    getResult() {
+        tailorDigestBits();
+        var result = (function (s) {
+            var a = []; while (s-- > 0)
+                a.push(0); return a;
+        })(hashSize);
+        if (hashSize >= HAVAL_256_BIT) {
+            result[31] = 255 & ((h7 >>> 24) | 0);
+            result[30] = 255 & ((h7 >>> 16) | 0);
+            result[29] = 255 & ((h7 >>> 8) | 0);
+            result[28] = 255 & (h7 | 0);
+        }
+        if (hashSize >= HAVAL_224_BIT) {
+            result[27] = 255 & ((h6 >>> 24) | 0);
+            result[26] = 255 & ((h6 >>> 16) | 0);
+            result[25] = 255 & ((h6 >>> 8) | 0);
+            result[24] = 255 & (h6 | 0);
+        }
+        if (hashSize >= HAVAL_192_BIT) {
+            result[23] = 255 & ((h5 >>> 24) | 0);
+            result[22] = 255 & ((h5 >>> 16) | 0);
+            result[21] = 255 & ((h5 >>> 8) | 0);
+            result[20] = 255 & (h5 | 0);
+        }
+        if (hashSize >= HAVAL_160_BIT) {
+            result[19] = 255 & ((h4 >>> 24) | 0);
+            result[18] = 255 & ((h4 >>> 16) | 0);
+            result[17] = 255 & ((h4 >>> 8) | 0);
+            result[16] = 255 & (h4 | 0);
+        }
+        result[15] = 255 & ((h3 >>> 24) | 0);
+        result[14] = 255 & ((h3 >>> 16) | 0);
+        result[13] = 255 & ((h3 >>> 8) | 0);
+        result[12] = 255 & (h3 | 0);
+        result[11] = 255 & ((h2 >>> 24) | 0);
+        result[10] = 255 & ((h2 >>> 16) | 0);
+        result[9] = 255 & ((h2 >>> 8) | 0);
+        result[8] = 255 & (h2 | 0);
+        result[7] = 255 & ((h1 >>> 24) | 0);
+        result[6] = 255 & ((h1 >>> 16) | 0);
+        result[5] = 255 & ((h1 >>> 8) | 0);
+        result[4] = 255 & (h1 | 0);
+        result[3] = 255 & ((h0 >>> 24) | 0);
+        result[2] = 255 & ((h0 >>> 16) | 0);
+        result[1] = 255 & ((h0 >>> 8) | 0);
+        result[0] = 255 & (h0 | 0);
+        return result;
+    };
+
+    tailorDigestBits() {
+        var t;
+        switch ((hashSize)) {
+            case 16 /* HAVAL_128_BIT */:
+                t = (h7 & 255) | (h6 & -16777216) | (h5 & 16711680) | (h4 & 65280);
+                h0 += t >>> 8 | t << 24;
+                t = (h7 & 65280) | (h6 & 255) | (h5 & -16777216) | (h4 & 16711680);
+                h1 += t >>> 16 | t << 16;
+                t = (h7 & 16711680) | (h6 & 65280) | (h5 & 255) | (h4 & -16777216);
+                h2 += t >>> 24 | t << 8;
+                t = (h7 & -16777216) | (h6 & 16711680) | (h5 & 65280) | (h4 & 255);
+                h3 += t;
+                break;
+            case 20 /* HAVAL_160_BIT */:
+                t = (h7 & 63) | (h6 & (127 << 25)) | (h5 & (63 << 19));
+                h0 += t >>> 19 | t << 13;
+                t = (h7 & (63 << 6)) | (h6 & 63) | (h5 & (127 << 25));
+                h1 += t >>> 25 | t << 7;
+                t = (h7 & (127 << 12)) | (h6 & (63 << 6)) | (h5 & 63);
+                h2 += t;
+                t = (h7 & (63 << 19)) | (h6 & (127 << 12)) | (h5 & (63 << 6));
+                h3 += (t >>> 6);
+                t = (h7 & (127 << 25)) | (h6 & (63 << 19)) | (h5 & (127 << 12));
+                h4 += (t >>> 12);
+                break;
+            case 24 /* HAVAL_192_BIT */:
+                t = (h7 & 31) | (h6 & (63 << 26));
+                h0 += t >>> 26 | t << 6;
+                t = (h7 & (31 << 5)) | (h6 & 31);
+                h1 += t;
+                t = (h7 & (63 << 10)) | (h6 & (31 << 5));
+                h2 += (t >>> 5);
+                t = (h7 & (31 << 16)) | (h6 & (63 << 10));
+                h3 += (t >>> 10);
+                t = (h7 & (31 << 21)) | (h6 & (31 << 16));
+                h4 += (t >>> 16);
+                t = (h7 & (63 << 26)) | (h6 & (31 << 21));
+                h5 += (t >>> 21);
+                break;
+            case 28 /* HAVAL_224_BIT */:
+                h0 += ((h7 >>> 27) & 31);
+                h1 += ((h7 >>> 22) & 31);
+                h2 += ((h7 >>> 18) & 15);
+                h3 += ((h7 >>> 13) & 31);
+                h4 += ((h7 >>> 9) & 15);
+                h5 += ((h7 >>> 4) & 31);
+                h6 += (h7 & 15);
+        }
+    };
+
+    FF1(x7, x6, x5, x4, x3, x2, x1, x0, w) {
+        var t;
+        switch ((rounds)) {
+            case 3:
+                t = f1(x1, x0, x3, x5, x6, x2, x4);
+                break;
+            case 4:
+                t = f1(x2, x6, x1, x4, x5, x3, x0);
+                break;
+            default:
+                t = f1(x3, x4, x1, x0, x5, x2, x6);
+        }
+        return (t >>> 7 | t << 25) + (x7 >>> 11 | x7 << 21) + w;
+    };
+
+    FF2(x7, x6, x5, x4, x3, x2, x1, x0, w, c) {
+        var t;
+        switch ((rounds)) {
+            case 3:
+                t = f2(x4, x2, x1, x0, x5, x3, x6);
+                break;
+            case 4:
+                t = f2(x3, x5, x2, x0, x1, x6, x4);
+                break;
+            default:
+                t = f2(x6, x2, x1, x0, x3, x4, x5);
+        }
+        return (t >>> 7 | t << 25) + (x7 >>> 11 | x7 << 21) + w + c;
+    };
+
+    FF3(x7, x6, x5, x4, x3, x2, x1, x0, w, c) {
+        var t;
+        switch ((rounds)) {
+            case 3:
+                t = f3(x6, x1, x2, x3, x4, x5, x0);
+                break;
+            case 4:
+                t = f3(x1, x4, x3, x6, x0, x2, x5);
+                break;
+            default:
+                t = f3(x2, x6, x0, x4, x3, x1, x5);
+        }
+        return (t >>> 7 | t << 25) + (x7 >>> 11 | x7 << 21) + w + c;
+    };
+
+    FF4(x7, x6, x5, x4, x3, x2, x1, x0, w, c) {
+        var t;
+        switch ((rounds)) {
+            case 4:
+                t = f4(x6, x4, x0, x5, x2, x1, x3);
+                break;
+            default:
+                t = f4(x1, x5, x3, x2, x0, x4, x6);
+        }
+        return (t >>> 7 | t << 25) + (x7 >>> 11 | x7 << 21) + w + c;
+    };
+
+    FF5(x7, x6, x5, x4, x3, x2, x1, x0, w, c) {
+        var t = f5(x2, x5, x0, x6, x4, x3, x1);
+        return (t >>> 7 | t << 25) + (x7 >>> 11 | x7 << 21) + w + c;
+    };
+
+    f1(x6, x5, x4, x3, x2, x1, x0) {
+        return x1 & (x0 ^ x4) ^ x2 & x5 ^ x3 & x6 ^ x0;
+    };
+
+    f2(x6, x5, x4, x3, x2, x1, x0) {
+        return x2 & (x1 & ~x3 ^ x4 & x5 ^ x6 ^ x0) ^ x4 & (x1 ^ x5) ^ x3 & x5 ^ x0;
+    };
+
+    f3(x6, x5, x4, x3, x2, x1, x0) {
+        return x3 & (x1 & x2 ^ x6 ^ x0) ^ x1 & x4 ^ x2 & x5 ^ x0;
+    };
+
+    f4(x6, x5, x4, x3, x2, x1, x0) {
+        return x4 & (x5 & ~x2 ^ x3 & ~x6 ^ x1 ^ x6 ^ x0) ^ x3 & (x1 & x2 ^ x5 ^ x6) ^ x2 & x6 ^ x0;
+    };
+
+    f5(x6, x5, x4, x3, x2, x1, x0) {
+        return x0 & (x1 & x2 & x3 ^ ~x5) ^ x1 & x4 ^ x2 & x5 ^ x3 & x6;
+    };
+
+    update$byte_A(b) {
+        //util.logArray(b);
+        update$byte_A$int$int(b, 0, b.length);
+    };
+
+    update$byte_A$int$int(b, offset, len) {
+        var n = ((count % blockSize) | 0);
+        count += len;
+        var partLen = blockSize - n;
+        var i = 0;
+        if (len >= partLen) {
+            // /* arraycopy */ (function (srcPts, srcOff, dstPts, dstOff, size) {
+            //     if (srcPts !== dstPts || dstOff >= srcOff + size) {
+            //         while (--size >= 0)
+            //             dstPts[dstOff++] = srcPts[srcOff++];
+            //     }
+            //     else {
+            //         var tmp = srcPts.slice(srcOff, srcOff + size);
+            //         for (var i_1 = 0; i_1 < size; i_1++)
+            //             dstPts[dstOff++] = tmp[i_1];
+            //     }
+            // })(b, offset, buffer, n, partLen);
+            util.arrayCopy(b, offset, buffer, n, partLen);
+            transform(buffer, 0);
+            for (i = partLen; i + blockSize - 1 < len; i += blockSize) {
+                {
+                    transform(b, offset + i);
+                }
+                ;
+            }
+            n = 0;
+        }
+        if (i < len) {
+            //console.log(buffer);
+            // /* arraycopy */ (function (srcPts, srcOff, dstPts, dstOff, size) {
+            //     if (srcPts !== dstPts || dstOff >= srcOff + size) {
+            //         while (--size >= 0) {
+            //             //console.log("size=" + size + " content=" + srcPts[srcOff++]);
+            //             dstPts[dstOff++] = srcPts[srcOff++];
+            //         }
+            //     }
+            //     else {
+            //         var tmp = srcPts.slice(srcOff, srcOff + size);
+            //         for (var i_2 = 0; i_2 < size; i_2++)
+            //             dstPts[dstOff++] = tmp[i_2];
+            //     }
+            // })(b, offset + i, buffer, n, len - i);
+            util.arrayCopy(b, offset + i, buffer, n, len - i);
+        }
+
+        // var msg="";
+        // for(var i=0; i< buffer.length; i++){
+        //     msg += ', '+buffer[i];
+        // }
+        // console.log(msg);
+    };
+
+    digest() {
+        //util.logArray(buffer);
+        var tail = padBuffer();
+        //util.logArray(tail);
+        update$byte_A$int$int(tail, 0, tail.length);
+        var result = getResult();
+        reset();
+        return result;
+    };
+
+    reset() {
+        count = 0;
+        for (var i = 0; i < blockSize;) {
+            {
+                buffer[i++] = 0;
+            }
+            ;
+        }
+        resetContext();
+    };
+
+    resetContext() {
+        h0 = 608135816;
+        h1 = -2052912941;
+        h2 = 320440878;
+        h3 = 57701188;
+        h4 = -1542899678;
+        h5 = 698298832;
+        h6 = 137296536;
+        h7 = -330404727;
+    };
+
+    Encrypt(src) {
+        init();
+
+        // console.log(src);
+        //util.logArray(str2ab(src));
+        // util.logArray(util.stringToArray(src));
+        // util.logArray(util.toUTF8Array(src));
+
+        //var h = new EncryptPwHaval(EncryptPwHaval.HAVAL_256_BIT, EncryptPwHaval.HAVAL_5_ROUND);
+        if (src != null && src.length > 0) {
+            update$byte_A(util.toUTF8Array(src));
+            //update$byte_A(/* getBytes */(src).split('').map(function (s) { return s.charCodeAt(0); }));
+            //update(/* getBytes */(src).split('').map(function (s) { return s.charCodeAt(0); }));
+        }
+        //return (h.digest().toString());
+        //console.log('-----');
+        var d = digest();
+        //console.log(d);
+        //return (h.digest().toString());
+        return (util.toHexString(d));
+        //return (h.digest());
+        //return(src);
+    };
+
+    stringToArrayOld(str) {
+        let ret = [];
+        for (let i = 0; i < str.length; i++) {
+            ret.push(str.charCodeAt(i));
+            if (ret[ret.length - 1] == 337) ret[ret.length - 1] = 245; //ő
+            if (ret[ret.length - 1] == 369) ret[ret.length - 1] = 251; //ű
+            if (ret[ret.length - 1] == 336) ret[ret.length - 1] = 213; //Ő
+            if (ret[ret.length - 1] == 368) ret[ret.length - 1] = 219; //Ű
+        }
+        return ret;
+    }
+
+    EncryptOld(src) {
+        init();
+
+        if (src != null && src.length > 0) {
+            update$byte_A(stringToArrayOld(src));
+        }
+        var d = digest();
+        return (util.toHexString(d));
+    };
+
+    toString() {
+        //return (`Haval(row=${this.row} col=${this.col})`);
+        return (`Haval`);
+    }
+
+}
 
 
 
@@ -1826,6 +2474,8 @@ function Encrypt(src) {
 
 module.exports = {
     //EncryptPwHaval: EncryptPwHaval,
-    Encrypt: Encrypt
+    Encrypt: Encrypt,
+    EncryptOld: EncryptOld,
+    Haval: Haval
     //main: main
 };
