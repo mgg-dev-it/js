@@ -693,14 +693,14 @@ class Haval {
     HAVAL_5_ROUND = 5;
 
     BLOCK_SIZE = 128; // inner block size in bytes
-    
+
     constructor(hashSize, rounds) {
         this.hashSize = this.HAVAL_256_BIT;
-        if(typeof hashSize !== 'undefined'){
+        if (typeof hashSize !== 'undefined') {
             this.hashSize = hashSize;
         }
         this.rounds = this.HAVAL_5_ROUND;
-        if(typeof rounds !== 'undefined'){
+        if (typeof rounds !== 'undefined') {
             this.rounds = rounds;
         }
 
@@ -765,7 +765,7 @@ class Haval {
         t5 = this.FF1(t5, t4, t3, t2, t1, t0, t7, t6, X2);
         t4 = this.FF1(t4, t3, t2, t1, t0, t7, t6, t5, X3);
         t3 = this.FF1(t3, t2, t1, t0, t7, t6, t5, t4, X4);
-        t2 =this.FF1(t2, t1, t0, t7, t6, t5, t4, t3, X5);
+        t2 = this.FF1(t2, t1, t0, t7, t6, t5, t4, t3, X5);
         t1 = this.FF1(t1, t0, t7, t6, t5, t4, t3, t2, X6);
         t0 = this.FF1(t0, t7, t6, t5, t4, t3, t2, t1, X7);
         t7 = this.FF1(t7, t6, t5, t4, t3, t2, t1, t0, X8);
@@ -1240,9 +1240,9 @@ class Haval {
         this.blockSize = this.BLOCK_SIZE;
         this.count = 0;
         this.rounds = this.HAVAL_5_ROUND;
-        buffer = util.initArray(0, this.blockSize);
+        this.buffer = util.initArray(0, this.blockSize);
         this.h0 = 0;
-        this. h1 = 0;
+        this.h1 = 0;
         this.h2 = 0;
         this.h3 = 0;
         this.h4 = 0;
@@ -1250,8 +1250,9 @@ class Haval {
         this.h6 = 0;
         this.h7 = 0;
         this.resetContext();
-    }
-        Encrypt(src) {
+    };
+    
+    Encrypt(src) {
         //this.reset();
         this.init();
 

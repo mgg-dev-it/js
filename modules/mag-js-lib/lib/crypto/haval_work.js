@@ -346,6 +346,7 @@ function getResult() {
     result[2] = 255 & ((h0 >>> 16) | 0);
     result[1] = 255 & ((h0 >>> 8) | 0);
     result[0] = 255 & (h0 | 0);
+    util.logArray(result);
     return result;
 };
 
@@ -988,7 +989,7 @@ class Haval {
             result[21] = 255 & ((this.h5 >>> 8) | 0);
             result[20] = 255 & (this.h5 | 0);
         }
-        if (this.ashSize >= this.HAVAL_160_BIT) {
+        if (this.hashSize >= this.HAVAL_160_BIT) {
             result[19] = 255 & ((this.h4 >>> 24) | 0);
             result[18] = 255 & ((this.h4 >>> 16) | 0);
             result[17] = 255 & ((this.h4 >>> 8) | 0);
@@ -1010,6 +1011,7 @@ class Haval {
         result[2] = 255 & ((this.h0 >>> 16) | 0);
         result[1] = 255 & ((this.h0 >>> 8) | 0);
         result[0] = 255 & (this.h0 | 0);
+        util.logArray(result);
         return result;
     };
 
