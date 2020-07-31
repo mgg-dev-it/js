@@ -12,7 +12,7 @@ var logindataprovider;
 
 function init(_logindataprovider) {
   if (!_logindataprovider.login) {
-    throw new Error("_logindataprovider.login not exists");
+    throw new Error("logindataprovider not exists");
     //@todo check parameters too?
     return (false);
   }
@@ -48,6 +48,7 @@ function login(username, password, options) {
     return (false);
   }
   if (!logindataprovider.login) {
+    throw new Error("logindataprovider not exists");
     return (false);
   }
   return (logindataprovider.login(username, password));
